@@ -8,19 +8,27 @@ const TodoContainer = () => {
     {
       id: 1,
       title: "ok",
-      content: "content",
+      content: "content111",
       isDone: false,
     },
+    {
+      id: 2,
+      title: "ok2",
+      content: "content222",
+      isDone: true,
+    },
   ]);
-  console.log(todos);
+
+  const workingTodos = todos.filter((todo) => !todo.isDone);
+  const doneTodos = todos.filter((todo) => todo.isDone);
+
   return (
-    <div>
+    <section>
+      <h1 className="title">Todo List</h1>
       <ExTodoForm setTodos={setTodos} />
-      <div>
-        <TodoList />
-        <TodoList />
-      </div>
-    </div>
+      <TodoList title="Working" todos={workingTodos} />
+      <TodoList title="Done" todos={doneTodos} />
+    </section>
   );
 };
 
