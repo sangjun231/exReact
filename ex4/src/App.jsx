@@ -9,11 +9,12 @@
 // 브라우저 랜더링은 다른 프로세스로 페인팅 이라고도 부름
 
 import Layout from "./components/Layout";
+import TodoContainer from "./components/todo/TodoContainer";
 
 const App = () => {
   return (
     <Layout>
-      <h1>Layout</h1>
+      <TodoContainer />
     </Layout>
   );
 };
