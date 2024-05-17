@@ -26,8 +26,8 @@ const TodoContainer = () => {
     <section>
       <h1 className="title">Todo List</h1>
       <ExTodoForm setTodos={setTodos} />
-      <TodoList title="Working" todos={workingTodos} />
-      <TodoList title="Done" todos={doneTodos} />
+      <TodoList title="Working" todos={workingTodos} setTodos={setTodos} />
+      <TodoList title="Done" todos={doneTodos} setTodos={setTodos} />
     </section>
   );
 };
