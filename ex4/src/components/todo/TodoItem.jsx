@@ -13,6 +13,13 @@ const TodoItem = ({ todo, setTodos }) => {
     );
   };
 
+  const toggleTodo2 = () => {
+    setTodos((prev) => prev.map((todo) => {
+      if (todo.id === id) todo.isDone = !todo.isDone;
+      return todo;
+    }))
+  }
+
   return (
     <div className="todoCard">
       <h3 className="todoTitle">{todo.title}</h3>
