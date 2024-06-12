@@ -1,35 +1,124 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import axios from "axios";
+import api from "./axios/api";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [todos, setTodos] = useState(null);
+  const [todo, setTodo] = useState({
+    title: "",
+  });
+  const [targetId, setTargetId] = useState("");
+  const [editTodo, setEditTodo] = useState({
+    title: "",
+  });
+
+  const onSubmitHandler = async (todo) => {
+    const { data } = await api.post("/todos", todo);
+    //끝나고 나면 -> await는 반드시 처리가 끝나기를 기다리고 실행
+    setTodos([...todos, data]);
+  };
+
+  // 만일 fetch를 사용했다면, 이렇게 JSON.stringify를 '직접' 해줘야 함
+  // await fetch("http://localhost:4000/todos", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify(todo),
+  // });
+
+  const onDeleteHandler = async (id) => {
+    await api.delete("/todos/" + id);
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  const onEditHandler = async (targetId, editTodo) => {
+    await api.patch("/todos/" + targetId, editTodo);
+    const newTodos = todos.map((todo) => {
+      if (todo.id === targetId) {
+        return {
+          ...todo,
+          title: editTodo.title,
+        };
+      }
+      return todo;
+    });
+    setTodos(newTodos);
+  };
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        // 구조 분해 할당으로 get 내부의 data 접근
+        const { data } = await api.get("/todos");
+        setTodos(data);
+      } catch (error) {
+        console.log("Error", error);
+      }
+    };
+    fetchPost();
+  }, []);
+
+  console.log(todos);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmitHandler(todo);
+        }}
+      >
+        <div>
+          <input
+            type="text"
+            placeholder="수정하고싶은 Todo Id를 입력"
+            onChange={(e) => {
+              setTargetId(e.target.value);
+            }}
+          />
+          <input
+            type="text"
+            placeholder="수정할 값 입력"
+            onChange={(e) => {
+              setEditTodo({ ...editTodo, title: e.target.value });
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              onEditHandler(targetId, editTodo);
+            }}
+          >
+            수정하기
+          </button>
+        </div>
+        <input
+          type="text"
+          onChange={(e) => {
+            setTodo({ ...todo, title: e.target.value });
+          }}
+        />
+        <button type="submit">추가하기</button>
+      </form>
+      {/* 옵셔널 체이닝 -> null or undefined일 경우 undefined 리턴
+      null은 map 메서드가 없음으로 오류 발생 */}
+      {todos?.map((todo) => {
+        return (
+          <div key={todo.id}>
+            <span>{todo.title}</span>
+            <button
+              onClick={() => {
+                onDeleteHandler(todo.id);
+              }}
+            >
+              삭제
+            </button>
+          </div>
+        );
+      })}
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
