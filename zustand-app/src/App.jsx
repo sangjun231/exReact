@@ -1,23 +1,29 @@
-import useBearsStore from "./zustand/bearsStore";
+import useTodosStore from "./zustand/todosStore.js";
 
 function App() {
-  // const bears = useBearsStore((state) => {
-  //   return state.bears;
-  // });
-  // const increase = useBearsStore((state) => {
-  //   return state.increase;
-  // });
-  // const { bears, increase } = useBearsStore((state) => {
-  //   return state;
-  // });
-  const { bears, increase, init } = useBearsStore((state) => state);
+  const { todos, addTodo, toggleTodo } = useTodosStore();
 
   return (
     <div>
-      <h2>Zustand</h2>
-      <h4>{bears}</h4>
-      <button onClick={increase}>+1</button>
-      <button onClick={init}>init</button>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <span
+              style={{
+                textDecoration: todo.completed ? "line-through" : "none",
+              }}
+              onClick={() => toggleTodo(todo.id)}
+            >
+              {todo.text}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <button
+        onClick={() => addTodo(prompt("새로운 todolist를 입력해주세요."))}
+      >
+        Add Todo
+      </button>
     </div>
   );
 }
