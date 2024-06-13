@@ -1,31 +1,30 @@
-import { useState } from "react";
+// src > App.jsx
 import useTodosStore from "./zustand/todosStore";
 
 function App() {
-  const todos = useTodosStore((state) => state.todos);
-  const addTodo = useTodosStore((state) => state.addTodo);
-  const removeTodo = useTodosStore((state) => state.removeTodo);
-  const [input, setInput] = useState("");
+  const { todos, addTodo, toggleTodo } = useTodosStore();
 
   return (
     <div>
-      <h1>Todo List</h1>
-      <input value={input} onChange={(e) => setInput(e.target.value)} />
-      <button
-        onClick={() => {
-          addTodo(input);
-          setInput("");
-        }}
-      >
-        Add Todo
-      </button>
       <ul>
-        {todos.map((todo, index) => (
-          <li key={index}>
-            {todo} <button onClick={() => removeTodo(index)}>Remove</button>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <span
+              style={{
+                textDecoration: todo.completed ? "line-through" : "none",
+              }}
+              onClick={() => toggleTodo(todo.id)}
+            >
+              {todo.text}
+            </span>
           </li>
         ))}
       </ul>
+      <button
+        onClick={() => addTodo(prompt("새로운 todolist를 입력해주세요."))}
+      >
+        Add Todo
+      </button>
     </div>
   );
 }
